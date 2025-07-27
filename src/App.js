@@ -7,14 +7,29 @@ function App() {
   const [answers, setAnswers] = useState([]);
   const [recommendations, setRecommendations] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [language, setLanguage] = useState('en'); // Default to English
 
+  // Detect language from browser or Shopify
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const shopifyLocale = urlParams.get('locale') || navigator.language.split('-')[0] || 'en';
+    setLanguage(shopifyLocale === 'zh' ? 'zh' : 'en');
+  }, []);
+
+  // Fetch questions from backend
   useEffect(() => {
     fetch('https://perfume-quiz-backend.onrender.com/questions')
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then(data => setQuestions(data))
       .catch(error => console.error('Error fetching questions:', error));
   }, []);
 
+  // Handle answer selection
   const handleAnswer = (option) => {
     if (isLoading) return;
     setIsLoading(true);
@@ -54,7 +69,7 @@ function App() {
     <div className="App">
       {recommendations ? (
         <div>
-          <h2>Your Top 3 Perfume Preferences:</h2>
+          <h2>{language === 'zh' ? '你的前三款香水推薦：' : 'Your Top 3 Perfume Preferences:'}</h2>
           <ul>
             {recommendations.map((perfume, index) => (
               <li key={index}>
@@ -66,12 +81,12 @@ function App() {
             ))}
           </ul>
           <button className="shop-now" onClick={() => window.location.href = 'https://floriographyscents.com/collections/all'}>
-            Shop Now
+            {language === 'zh' ? '立即選購' : 'Shop Now'}
           </button>
         </div>
       ) : (
         <div>
-          <h2>{questions[currentQuestion].text.en}</h2>
+          <h2>{questions[currentQuestion].text[language]}</h2>
           <div className="options">
             {questions[currentQuestion].options.map((option, index) => (
               <button
@@ -80,12 +95,12 @@ function App() {
                 disabled={isLoading}
                 className={isLoading ? 'disabled' : ''}
               >
-                {option.en}
+                {option[language]}
               </button>
             ))}
           </div>
-          <p>Question {currentQuestion + 1} of {questions.length}</p>
-          {isLoading && <p>Loading results...</p>}
+          <p>{language === 'zh' ? `問題 ${currentQuestion + 1} 共 ${questions.length}` : `Question ${currentQuestion + 1} of ${questions.length}`}</p>
+          {isLoading && <p>{language === 'zh' ? '正在載入結果...' : 'Loading results...'}</p>}
         </div>
       )}
     </div>
