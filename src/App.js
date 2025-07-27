@@ -6,30 +6,27 @@ function App() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [recommendations, setRecommendations] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch questions from backend
   useEffect(() => {
-    fetch('http://localhost:3000/questions')
+    fetch('https://perfume-quiz-backend.onrender.com/questions')
       .then(response => response.json())
       .then(data => setQuestions(data))
       .catch(error => console.error('Error fetching questions:', error));
   }, []);
 
-  // Handle answer selection
   const handleAnswer = (option) => {
-    if (isLoading) return; // Prevent multiple clicks
-    setIsLoading(true); // Set loading state
+    if (isLoading) return;
+    setIsLoading(true);
 
     const newAnswers = [...answers, { questionId: questions[currentQuestion].id, option }];
     setAnswers(newAnswers);
 
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
-      setIsLoading(false); // Reset loading for next question
+      setIsLoading(false);
     } else {
-      // Submit answers when quiz is complete
-      fetch('http://localhost:3000/recommend', {
+      fetch('https://perfume-quiz-backend.onrender.com/recommend', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers: newAnswers })
@@ -37,11 +34,11 @@ function App() {
         .then(response => response.json())
         .then(data => {
           setRecommendations(data);
-          setIsLoading(false); // Reset loading after fetch
+          setIsLoading(false);
         })
         .catch(error => {
           console.error('Error fetching recommendations:', error);
-          setIsLoading(false); // Reset loading on error
+          setIsLoading(false);
         });
     }
   };
@@ -75,7 +72,7 @@ function App() {
               <button
                 key={index}
                 onClick={() => handleAnswer(option.value)}
-                disabled={isLoading} // Disable buttons during loading
+                disabled={isLoading}
                 className={isLoading ? 'disabled' : ''}
               >
                 {option.en}
@@ -83,7 +80,7 @@ function App() {
             ))}
           </div>
           <p>Question {currentQuestion + 1} of {questions.length}</p>
-          {isLoading && <p>Loading results...</p>} {/* Visual feedback */}
+          {isLoading && <p>Loading results...</p>}
         </div>
       )}
     </div>

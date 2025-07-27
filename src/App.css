@@ -4,7 +4,7 @@
   text-align: center;
   font-family: 'Josefin Sans', sans-serif;
   padding: 20px;
-  background-color: #FFFFFF; /* White background to match floriographyscents.com */
+  background-color: #FFFFFF;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -13,7 +13,7 @@
 }
 
 h2 {
-  color: #4a3c3c; /* Dark brown text */
+  color: #4a3c3c;
   font-size: 24px;
   font-weight: 700;
   margin-bottom: 20px;
@@ -26,7 +26,7 @@ h2 {
   margin: 10px auto;
   padding: 12px;
   background-color: #FFFFFF;
-  border: 1px solid #d7d2cb; /* Soft taupe border */
+  border: 1px solid #d7d2cb;
   border-radius: 8px;
   font-size: 16px;
   font-family: 'Josefin Sans', sans-serif;
@@ -36,8 +36,8 @@ h2 {
 }
 
 .options button:hover:not(.disabled) {
-  background-color: #f0edea; /* Light taupe hover */
-  border-color: #b5b0a1; /* Darker taupe on hover */
+  background-color: #f0edea;
+  border-color: #b5b0a1;
 }
 
 .options button.disabled {
@@ -64,7 +64,7 @@ li a {
 }
 
 li a:hover {
-  color: #b5b0a1; /* Darker taupe for link hover */
+  color: #b5b0a1;
   text-decoration: underline;
 }
 
@@ -77,7 +77,7 @@ li a:hover {
 }
 
 .shop-now {
-  background-color: #d7d2cb; /* Soft taupe button */
+  background-color: #d7d2cb;
   color: #FFFFFF;
   border: none;
   padding: 12px 24px;
@@ -90,7 +90,7 @@ li a:hover {
 }
 
 .shop-now:hover {
-  background-color: #b5b0a1; /* Darker taupe hover */
+  background-color: #b5b0a1;
 }
 
 p {
