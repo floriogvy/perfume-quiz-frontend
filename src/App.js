@@ -7,7 +7,7 @@ function App() {
   const [answers, setAnswers] = useState([]);
   const [recommendations, setRecommendations] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [language, setLanguage] = useState('en'); // Default to English
+  const [language, setLanguage] = useState('en');
 
   // Detect language from browser or Shopify
   useEffect(() => {
@@ -74,9 +74,9 @@ function App() {
             {recommendations.map((perfume, index) => (
               <li key={index}>
                 <a href={`https://floriographyscents.com/products/${perfume.name.toLowerCase().replace(/no.\s*\d+\s*/gi, '').replace(/\s+/g, '').replace(/'/g, '')}`}>
-                  {perfume.name}
+                  {language === 'zh' ? perfume.name_zh : perfume.name}
                 </a>
-                <p className="perfume-description">{perfume.traits.join(', ')}</p>
+                <p className="perfume-description">{language === 'zh' ? perfume.traits_zh.join(', ') : perfume.traits.join(', ')}</p>
               </li>
             ))}
           </ul>
