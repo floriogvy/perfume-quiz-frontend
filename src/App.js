@@ -34,35 +34,48 @@ function App() {
 
   // Detect language
   useEffect(() => {
+    let cachedLocale = null;
+
     const updateLanguage = () => {
+      if (cachedLocale) {
+        console.log('Mobile debug: Using cached locale:', cachedLocale);
+        setLanguage(cachedLocale === 'zh' || cachedLocale === 'zh-TW' ? 'zh' : 'en');
+        return;
+      }
+
       // Check URL parameter first
       const urlParams = new URLSearchParams(window.location.search);
       let shopifyLocale = urlParams.get('locale');
+      console.log('Mobile debug: URL locale:', shopifyLocale);
 
       // Fallback to cookies
       if (!shopifyLocale) {
         const cookies = ['locale', 'cart_currency', 'shopify_locale', '_shopify_y', '_shopify_s'];
         for (const cookie of cookies) {
           shopifyLocale = getCookie(cookie);
+          console.log(`Mobile debug: Cookie ${cookie}:`, shopifyLocale);
           if (shopifyLocale && (shopifyLocale === 'zh' || shopifyLocale === 'zh-TW' || shopifyLocale === 'en')) break;
         }
       }
 
-      // Fallback to parent window URL (one-time check)
+      // Fallback to parent window URL
       if (!shopifyLocale && window.parent) {
         try {
           const parentUrl = new URL(window.parent.location.href);
           shopifyLocale = parentUrl.searchParams.get('locale');
+          console.log('Mobile debug: Parent URL locale:', shopifyLocale);
         } catch (e) {
-          console.log('Could not access parent window:', e);
+          console.log('Mobile debug: Could not access parent window:', e);
         }
       }
 
-      // Fallback to browser language
+      // Avoid browser language fallback on mobile
       if (!shopifyLocale) {
-        shopifyLocale = navigator.language.split('-')[0] || 'en';
+        shopifyLocale = 'en'; // Default to English only if no other source
+        console.log('Mobile debug: Defaulting to en (no locale found)');
       }
 
+      cachedLocale = shopifyLocale;
       setLanguage(shopifyLocale === 'zh' || shopifyLocale === 'zh-TW' ? 'zh' : 'en');
     };
 
@@ -71,6 +84,8 @@ function App() {
     // Listen for language changes via postMessage
     const handleMessage = (event) => {
       if (event.data && event.data.locale) {
+        console.log('Mobile debug: Received postMessage locale:', event.data.locale);
+        cachedLocale = event.data.locale;
         setLanguage(event.data.locale === 'zh' || event.data.locale === 'zh-TW' ? 'zh' : 'en');
       }
     };
