@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap');
+
+.App {
+  text-align: center;
+  font-family: 'Josefin Sans', sans-serif;
+  padding: 20px;
+  background-color: #FFFFFF; /* White background to match floriographyscents.com */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+h2 {
+  color: #4a3c3c; /* Dark brown text */
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.options button {
+  display: block;
+  width: 80%;
+  max-width: 400px;
+  margin: 10px auto;
+  padding: 12px;
+  background-color: #FFFFFF;
+  border: 1px solid #d7d2cb; /* Soft taupe border */
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: 'Josefin Sans', sans-serif;
+  color: #4a3c3c;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.options button:hover:not(.disabled) {
+  background-color: #f0edea; /* Light taupe hover */
+  border-color: #b5b0a1; /* Darker taupe on hover */
+}
+
+.options button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin: 15px 0;
+  font-size: 18px;
+  font-family: 'Josefin Sans', sans-serif;
+  color: #4a3c3c;
+}
+
+li a {
+  color: #4a3c3c;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+li a:hover {
+  color: #b5b0a1; /* Darker taupe for link hover */
+  text-decoration: underline;
+}
+
+.perfume-description {
+  font-size: 14px;
+  color: #4a3c3c;
+  font-family: 'Josefin Sans', sans-serif;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.shop-now {
+  background-color: #d7d2cb; /* Soft taupe button */
+  color: #FFFFFF;
+  border: none;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-family: 'Josefin Sans', sans-serif;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+}
+
+.shop-now:hover {
+  background-color: #b5b0a1; /* Darker taupe hover */
+}
+
+p {
+  color: #4a3c3c;
+  font-size: 14px;
+  font-family: 'Josefin Sans', sans-serif;
+}
