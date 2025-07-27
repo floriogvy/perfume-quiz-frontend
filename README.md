@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -72,3 +73,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 =======
 # perfume-quiz-frontend
 >>>>>>> 7b5064fa2390b8bbf4f2502ac24edd38f83363ce
+=======
+# perfume-quiz-frontend
+>>>>>>> b74400d194b9db004ce358882d79d36fdd901edd
