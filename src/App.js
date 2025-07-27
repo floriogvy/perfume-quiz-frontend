@@ -7,7 +7,7 @@ function App() {
   const [answers, setAnswers] = useState([]);
   const [recommendations, setRecommendations] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState(null); // Initialize as null
 
   // Map perfume names to Shopify product handles
   const productHandles = {
@@ -39,7 +39,9 @@ function App() {
     const updateLanguage = () => {
       if (cachedLocale) {
         console.log('Mobile debug: Using cached locale:', cachedLocale);
-        setLanguage(cachedLocale === 'zh' || cachedLocale === 'zh-TW' ? 'zh' : 'en');
+        if (cachedLocale !== language) {
+          setLanguage(cachedLocale === 'zh' || cachedLocale === 'zh-TW' ? 'zh' : 'en');
+        }
         return;
       }
 
@@ -69,9 +71,9 @@ function App() {
         }
       }
 
-      // Avoid browser language fallback on mobile
+      // Avoid browser language fallback unless no other source
       if (!shopifyLocale) {
-        shopifyLocale = 'en'; // Default to English only if no other source
+        shopifyLocale = 'en';
         console.log('Mobile debug: Defaulting to en (no locale found)');
       }
 
@@ -143,6 +145,7 @@ function App() {
             return response.json();
           })
           .then(data => {
+            console.log('Mobile debug: Rendering recommendations with language:', language);
             setRecommendations(data);
             setIsLoading(false);
           })
