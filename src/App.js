@@ -158,6 +158,7 @@ function App() {
                   e.preventDefault();
                   handleAnswer(option.value);
                 }}
+                onWheel={(e) => e.preventDefault()} // Prevent scroll propagation
                 disabled={isLoading}
                 className={isLoading ? 'disabled' : ''}
               >
