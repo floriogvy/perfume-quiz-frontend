@@ -9,12 +9,37 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [language, setLanguage] = useState('en');
 
-  // Detect language from browser or Shopify
+  // Detect language from Shopify locale, URL, or browser
   useEffect(() => {
+    // Check URL parameter first
     const urlParams = new URLSearchParams(window.location.search);
-    const shopifyLocale = urlParams.get('locale') || navigator.language.split('-')[0] || 'en';
-    setLanguage(shopifyLocale === 'zh' ? 'zh' : 'en');
+    let shopifyLocale = urlParams.get('locale');
+
+    // Fallback to Shopify's cookie or parent window locale
+    if (!shopifyLocale && window.parent) {
+      try {
+        const parentUrl = new URL(window.parent.location.href);
+        shopifyLocale = parentUrl.searchParams.get('locale') || getCookie('locale');
+      } catch (e) {
+        console.log('Could not access parent window:', e);
+      }
+    }
+
+    // Fallback to browser language
+    if (!shopifyLocale) {
+      shopifyLocale = navigator.language.split('-')[0] || 'en';
+    }
+
+    setLanguage(shopifyLocale === 'zh' || shopifyLocale === 'zh-TW' ? 'zh' : 'en');
   }, []);
+
+  // Helper function to get cookie
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
 
   // Fetch questions from backend
   useEffect(() => {
