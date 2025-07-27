@@ -41,7 +41,21 @@ function App() {
 
       // Fallback to cookies
       if (!shopifyLocale) {
-        shopifyLocale = getCookie('locale') || getCookie('cart_currency') || getCookie('shopify_locale');
+        const cookies = ['locale', 'cart_currency', 'shopify_locale', '_shopify_y', '_shopify_s'];
+        for (const cookie of cookies) {
+          shopifyLocale = getCookie(cookie);
+          if (shopifyLocale && (shopifyLocale === 'zh' || shopifyLocale === 'zh-TW' || shopifyLocale === 'en')) break;
+        }
+      }
+
+      // Fallback to parent window URL (one-time check)
+      if (!shopifyLocale && window.parent) {
+        try {
+          const parentUrl = new URL(window.parent.location.href);
+          shopifyLocale = parentUrl.searchParams.get('locale');
+        } catch (e) {
+          console.log('Could not access parent window:', e);
+        }
       }
 
       // Fallback to browser language
@@ -63,12 +77,8 @@ function App() {
 
     window.addEventListener('message', handleMessage);
 
-    // Poll cookies for mobile (less aggressive)
-    const interval = setInterval(updateLanguage, 2000);
-
     return () => {
       window.removeEventListener('message', handleMessage);
-      clearInterval(interval);
     };
   }, []);
 

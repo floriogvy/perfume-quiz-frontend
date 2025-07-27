@@ -62,7 +62,6 @@ ul {
   background-color: #d7d2cb;
   border-radius: 8px;
   font-family: 'Josefin Sans', sans-serif;
-  color: #FFFFFF;
   text-align: center;
   transition: background-color 0.3s;
 }
@@ -72,7 +71,7 @@ ul {
 }
 
 .perfume-button a {
-  color: #FFFFFF;
+  color: #4a3c3c;
   text-decoration: none;
   font-size: 18px;
   font-weight: 700;
@@ -85,7 +84,7 @@ ul {
 
 .perfume-description {
   font-size: 14px;
-  color: #FFFFFF;
+  color: #4a3c3c;
   font-family: 'Josefin Sans', sans-serif;
   margin-top: 5px;
   font-style: italic;
