@@ -37,11 +37,8 @@ function App() {
     let cachedLocale = null;
 
     const updateLanguage = () => {
-      if (cachedLocale) {
+      if (cachedLocale && cachedLocale === (language === 'zh' || language === 'zh-TW' ? 'zh' : 'en')) {
         console.log('Mobile debug: Using cached locale:', cachedLocale);
-        if (cachedLocale !== language) {
-          setLanguage(cachedLocale === 'zh' || cachedLocale === 'zh-TW' ? 'zh' : 'en');
-        }
         return;
       }
 
@@ -78,7 +75,10 @@ function App() {
       }
 
       cachedLocale = shopifyLocale;
-      setLanguage(shopifyLocale === 'zh' || shopifyLocale === 'zh-TW' ? 'zh' : 'en');
+      const newLanguage = shopifyLocale === 'zh' || shopifyLocale === 'zh-TW' ? 'zh' : 'en';
+      if (newLanguage !== language) {
+        setLanguage(newLanguage);
+      }
     };
 
     updateLanguage();
@@ -88,7 +88,10 @@ function App() {
       if (event.data && event.data.locale) {
         console.log('Mobile debug: Received postMessage locale:', event.data.locale);
         cachedLocale = event.data.locale;
-        setLanguage(event.data.locale === 'zh' || event.data.locale === 'zh-TW' ? 'zh' : 'en');
+        const newLanguage = event.data.locale === 'zh' || event.data.locale === 'zh-TW' ? 'zh' : 'en';
+        if (newLanguage !== language) {
+          setLanguage(newLanguage);
+        }
       }
     };
 
@@ -97,7 +100,7 @@ function App() {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, []);
+  }, [language]); // Added language as dependency
 
   // Helper function to get cookie
   function getCookie(name) {
