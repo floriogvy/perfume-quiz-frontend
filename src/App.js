@@ -9,19 +9,39 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [language, setLanguage] = useState('en');
 
+  // Map perfume names to Shopify product handles
+  const productHandles = {
+    "No. 01 Old Bookstore": "oldbookstore",
+    "No. 29 Sara's Softener": "sarassoftener",
+    "No. 34 After Rain Earth": "afterrainearth",
+    "No. 37 Bamboo Mist": "bamboomist",
+    "No. 39 Osmanthus Tea": "osmanthustea",
+    "No. 40 Bar Rocking Chair": "barrockingchair",
+    "No. 41 White Birch": "whitebirch",
+    "No. 42 Löyly": "loyly",
+    "No. 43 Nukkua": "nukkua",
+    "No. 54 Mimosa Marzipan": "mimosamarzipan",
+    "No. 60 852 Concrete": "852concrete",
+    "No. 61 852 Orchid": "852orchid",
+    "No. 73 Shine Muscat": "shinemuscat",
+    "No. 75 Dry Yuzu": "dryyuzu",
+    "No. 82 Ethereal Lilies": "ethereallilies",
+    "No. 92 Cornfields": "cornfields",
+    "No. 100 Pop the Apple Fizz": "poptheapplefizz",
+    "No. 64 Ume": "ume",
+    "No. 97 The Guava Tree": "theguavatree"
+  };
+
   // Detect language from Shopify locale, URL, or browser
   useEffect(() => {
     const updateLanguage = () => {
-      // Check URL parameter
       const urlParams = new URLSearchParams(window.location.search);
       let shopifyLocale = urlParams.get('locale');
 
-      // Fallback to Shopify's cookie
       if (!shopifyLocale) {
         shopifyLocale = getCookie('locale') || getCookie('cart_currency');
       }
 
-      // Fallback to browser language
       if (!shopifyLocale) {
         shopifyLocale = navigator.language.split('-')[0] || 'en';
       }
@@ -29,10 +49,8 @@ function App() {
       setLanguage(shopifyLocale === 'zh' || shopifyLocale === 'zh-TW' ? 'zh' : 'en');
     };
 
-    // Initial language check
     updateLanguage();
 
-    // Listen for language changes via postMessage
     const handleMessage = (event) => {
       if (event.data && event.data.locale) {
         setLanguage(event.data.locale === 'zh' || event.data.locale === 'zh-TW' ? 'zh' : 'en');
@@ -72,12 +90,10 @@ function App() {
   const handleAnswer = (option) => {
     if (isLoading) return;
 
-    // Clear any existing timeout
     if (debounceTimeout) {
       clearTimeout(debounceTimeout);
     }
 
-    // Set new timeout
     debounceTimeout = setTimeout(() => {
       setIsLoading(true);
       const newAnswers = [...answers, { questionId: questions[currentQuestion].id, option }];
@@ -107,7 +123,7 @@ function App() {
             setIsLoading(false);
           });
       }
-    }, 500); // 500ms debounce
+    }, 500);
   };
 
   if (!questions.length) return <div>Loading...</div>;
@@ -120,14 +136,14 @@ function App() {
           <ul>
             {recommendations.map((perfume, index) => (
               <li key={index}>
-                <a href={`https://floriographyscents.com/products/${perfume.name.toLowerCase().replace(/no.\s*\d+\s*/gi, '').replace(/\s+/g, '').replace(/'/g, '')}`}>
+                <a href={`https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}`}>
                   {language === 'zh' ? perfume.name_zh : perfume.name}
                 </a>
                 <p className="perfume-description">{language === 'zh' ? perfume.traits_zh.join(', ') : perfume.traits.join(', ')}</p>
               </li>
             ))}
           </ul>
-          <button className="shop-now" onClick={() => window.location.href = 'https://floriographyscents.com/collections/all'}>
+          <button className="shop-now" onClick={() => window.location.href = `https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/collections/all`}>
             {language === 'zh' ? '立即選購' : 'Shop Now'}
           </button>
         </div>
@@ -139,7 +155,7 @@ function App() {
               <button
                 key={index}
                 onClick={(e) => {
-                  e.preventDefault(); // Prevent default behavior
+                  e.preventDefault();
                   handleAnswer(option.value);
                 }}
                 disabled={isLoading}
