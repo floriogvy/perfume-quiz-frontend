@@ -136,14 +136,21 @@ function App() {
           <ul>
             {recommendations.map((perfume, index) => (
               <li key={index}>
-                <a href={`https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}`}>
+                <a 
+                  href={`https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {language === 'zh' ? perfume.name_zh : perfume.name}
                 </a>
                 <p className="perfume-description">{language === 'zh' ? perfume.traits_zh.join(', ') : perfume.traits.join(', ')}</p>
               </li>
             ))}
           </ul>
-          <button className="shop-now" onClick={() => window.location.href = `https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/collections/all`}>
+          <button 
+            className="shop-now" 
+            onClick={() => window.open(`https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/collections/all`, '_blank')}
+          >
             {language === 'zh' ? '立即選購' : 'Shop Now'}
           </button>
         </div>
@@ -158,7 +165,7 @@ function App() {
                   e.preventDefault();
                   handleAnswer(option.value);
                 }}
-                onWheel={(e) => e.preventDefault()} // Prevent scroll propagation
+                onWheel={(e) => e.preventDefault()}
                 disabled={isLoading}
                 className={isLoading ? 'disabled' : ''}
               >
