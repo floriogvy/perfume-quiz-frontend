@@ -11,26 +11,48 @@ function App() {
 
   // Detect language from Shopify locale, URL, or browser
   useEffect(() => {
-    // Check URL parameter first
-    const urlParams = new URLSearchParams(window.location.search);
-    let shopifyLocale = urlParams.get('locale');
+    const updateLanguage = () => {
+      // Check URL parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      let shopifyLocale = urlParams.get('locale');
 
-    // Fallback to Shopify's cookie or parent window locale
-    if (!shopifyLocale && window.parent) {
-      try {
-        const parentUrl = new URL(window.parent.location.href);
-        shopifyLocale = parentUrl.searchParams.get('locale') || getCookie('locale');
-      } catch (e) {
-        console.log('Could not access parent window:', e);
+      // Fallback to Shopify's cookie or parent window
+      if (!shopifyLocale && window.parent) {
+        try {
+          const parentUrl = new URL(window.parent.location.href);
+          shopifyLocale = parentUrl.searchParams.get('locale') || getCookie('locale');
+        } catch (e) {
+          console.log('Could not access parent window:', e);
+        }
       }
-    }
 
-    // Fallback to browser language
-    if (!shopifyLocale) {
-      shopifyLocale = navigator.language.split('-')[0] || 'en';
-    }
+      // Fallback to browser language
+      if (!shopifyLocale) {
+        shopifyLocale = navigator.language.split('-')[0] || 'en';
+      }
 
-    setLanguage(shopifyLocale === 'zh' || shopifyLocale === 'zh-TW' ? 'zh' : 'en');
+      setLanguage(shopifyLocale === 'zh' || shopifyLocale === 'zh-TW' ? 'zh' : 'en');
+    };
+
+    // Initial language check
+    updateLanguage();
+
+    // Listen for language changes via postMessage
+    const handleMessage = (event) => {
+      if (event.data && event.data.locale) {
+        setLanguage(event.data.locale === 'zh' || event.data.locale === 'zh-TW' ? 'zh' : 'en');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    // Poll parent URL every 1s for locale changes
+    const interval = setInterval(updateLanguage, 1000);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      clearInterval(interval);
+    };
   }, []);
 
   // Helper function to get cookie
@@ -54,7 +76,7 @@ function App() {
       .catch(error => console.error('Error fetching questions:', error));
   }, []);
 
-  // Handle answer selection
+  // Handle answer selection with debouncing
   const handleAnswer = (option) => {
     if (isLoading) return;
     setIsLoading(true);
@@ -63,8 +85,10 @@ function App() {
     setAnswers(newAnswers);
 
     if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-      setIsLoading(false);
+      setTimeout(() => {
+        setCurrentQuestion(currentQuestion + 1);
+        setIsLoading(false);
+      }, 300); // Debounce to prevent rapid clicks
     } else {
       fetch('https://perfume-quiz-backend.onrender.com/recommend', {
         method: 'POST',
