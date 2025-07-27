@@ -1,15 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap');
 
 .App {
-  text-align: center;
   font-family: 'Josefin Sans', sans-serif;
+  text-align: center;
   padding: 20px;
   background-color: #FFFFFF;
-  min-height: 100vh;
+  min-height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 h2 {
@@ -48,53 +50,43 @@ h2 {
 ul {
   list-style: none;
   padding: 0;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-li {
-  margin: 15px 0;
-  font-size: 18px;
+.perfume-button {
+  display: block;
+  margin: 15px auto;
+  padding: 12px;
+  background-color: #d7d2cb;
+  border-radius: 8px;
   font-family: 'Josefin Sans', sans-serif;
-  color: #4a3c3c;
+  color: #FFFFFF;
+  text-align: center;
+  transition: background-color 0.3s;
 }
 
-li a {
-  color: #4a3c3c;
+.perfume-button:hover {
+  background-color: #b5b0a1;
+}
+
+.perfume-button a {
+  color: #FFFFFF;
   text-decoration: none;
-  transition: color 0.3s;
+  font-size: 18px;
+  font-weight: 700;
+  display: block;
 }
 
-li a:hover {
-  color: #b5b0a1;
-  text-decoration: underline;
+.perfume-button a:hover {
+  text-decoration: none;
 }
 
 .perfume-description {
   font-size: 14px;
-  color: #4a3c3c;
+  color: #FFFFFF;
   font-family: 'Josefin Sans', sans-serif;
   margin-top: 5px;
   font-style: italic;
-}
-
-.shop-now {
-  background-color: #d7d2cb;
-  color: #FFFFFF;
-  border: none;
-  padding: 12px 24px;
-  font-size: 18px;
-  font-family: 'Josefin Sans', sans-serif;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.3s;
-}
-
-.shop-now:hover {
-  background-color: #b5b0a1;
-}
-
-p {
-  color: #4a3c3c;
-  font-size: 14px;
-  font-family: 'Josefin Sans', sans-serif;
 }

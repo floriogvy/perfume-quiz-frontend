@@ -32,16 +32,19 @@ function App() {
     "No. 97 The Guava Tree": "theguavatree"
   };
 
-  // Detect language from Shopify locale, URL, or browser
+  // Detect language
   useEffect(() => {
     const updateLanguage = () => {
+      // Check URL parameter first
       const urlParams = new URLSearchParams(window.location.search);
       let shopifyLocale = urlParams.get('locale');
 
+      // Fallback to cookies
       if (!shopifyLocale) {
-        shopifyLocale = getCookie('locale') || getCookie('cart_currency');
+        shopifyLocale = getCookie('locale') || getCookie('cart_currency') || getCookie('shopify_locale');
       }
 
+      // Fallback to browser language
       if (!shopifyLocale) {
         shopifyLocale = navigator.language.split('-')[0] || 'en';
       }
@@ -51,6 +54,7 @@ function App() {
 
     updateLanguage();
 
+    // Listen for language changes via postMessage
     const handleMessage = (event) => {
       if (event.data && event.data.locale) {
         setLanguage(event.data.locale === 'zh' || event.data.locale === 'zh-TW' ? 'zh' : 'en');
@@ -59,8 +63,12 @@ function App() {
 
     window.addEventListener('message', handleMessage);
 
+    // Poll cookies for mobile (less aggressive)
+    const interval = setInterval(updateLanguage, 2000);
+
     return () => {
       window.removeEventListener('message', handleMessage);
+      clearInterval(interval);
     };
   }, []);
 
@@ -72,7 +80,7 @@ function App() {
     return null;
   }
 
-  // Fetch questions from backend
+  // Fetch questions
   useEffect(() => {
     fetch('https://perfume-quiz-backend.onrender.com/questions')
       .then(response => {
@@ -85,20 +93,15 @@ function App() {
       .catch(error => console.error('Error fetching questions:', error));
   }, []);
 
-  // Handle answer selection with debouncing
+  // Handle answer selection
   let debounceTimeout = null;
   const handleAnswer = (option) => {
     if (isLoading) return;
-
-    if (debounceTimeout) {
-      clearTimeout(debounceTimeout);
-    }
-
+    if (debounceTimeout) clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
       setIsLoading(true);
       const newAnswers = [...answers, { questionId: questions[currentQuestion].id, option }];
       setAnswers(newAnswers);
-
       if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
         setIsLoading(false);
@@ -132,11 +135,11 @@ function App() {
     <div className="App">
       {recommendations ? (
         <div>
-          <h2>{language === 'zh' ? '你的前三款香水推薦：' : 'Your Top 3 Perfume Preferences:'}</h2>
+          <h2>{language === 'zh' ? '你的前三款香水推薦：' : 'Your Top 3 Perfume Recommendations:'}</h2>
           <ul>
             {recommendations.map((perfume, index) => (
-              <li key={index}>
-                <a 
+              <li key={index} className="perfume-button">
+                <a
                   href={`https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -147,12 +150,6 @@ function App() {
               </li>
             ))}
           </ul>
-          <button 
-            className="shop-now" 
-            onClick={() => window.open(`https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/collections/all`, '_blank')}
-          >
-            {language === 'zh' ? '立即選購' : 'Shop Now'}
-          </button>
         </div>
       ) : (
         <div>
