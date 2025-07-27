@@ -16,14 +16,9 @@ function App() {
       const urlParams = new URLSearchParams(window.location.search);
       let shopifyLocale = urlParams.get('locale');
 
-      // Fallback to Shopify's cookie or parent window
-      if (!shopifyLocale && window.parent) {
-        try {
-          const parentUrl = new URL(window.parent.location.href);
-          shopifyLocale = parentUrl.searchParams.get('locale') || getCookie('locale');
-        } catch (e) {
-          console.log('Could not access parent window:', e);
-        }
+      // Fallback to Shopify's cookie
+      if (!shopifyLocale) {
+        shopifyLocale = getCookie('locale') || getCookie('cart_currency');
       }
 
       // Fallback to browser language
@@ -46,12 +41,8 @@ function App() {
 
     window.addEventListener('message', handleMessage);
 
-    // Poll parent URL every 1s for locale changes
-    const interval = setInterval(updateLanguage, 1000);
-
     return () => {
       window.removeEventListener('message', handleMessage);
-      clearInterval(interval);
     };
   }, []);
 
@@ -77,39 +68,46 @@ function App() {
   }, []);
 
   // Handle answer selection with debouncing
+  let debounceTimeout = null;
   const handleAnswer = (option) => {
     if (isLoading) return;
-    setIsLoading(true);
 
-    const newAnswers = [...answers, { questionId: questions[currentQuestion].id, option }];
-    setAnswers(newAnswers);
+    // Clear any existing timeout
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
 
-    if (currentQuestion < questions.length - 1) {
-      setTimeout(() => {
+    // Set new timeout
+    debounceTimeout = setTimeout(() => {
+      setIsLoading(true);
+      const newAnswers = [...answers, { questionId: questions[currentQuestion].id, option }];
+      setAnswers(newAnswers);
+
+      if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
         setIsLoading(false);
-      }, 300); // Debounce to prevent rapid clicks
-    } else {
-      fetch('https://perfume-quiz-backend.onrender.com/recommend', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers: newAnswers })
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
+      } else {
+        fetch('https://perfume-quiz-backend.onrender.com/recommend', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answers: newAnswers })
         })
-        .then(data => {
-          setRecommendations(data);
-          setIsLoading(false);
-        })
-        .catch(error => {
-          console.error('Error fetching recommendations:', error);
-          setIsLoading(false);
-        });
-    }
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            setRecommendations(data);
+            setIsLoading(false);
+          })
+          .catch(error => {
+            console.error('Error fetching recommendations:', error);
+            setIsLoading(false);
+          });
+      }
+    }, 500); // 500ms debounce
   };
 
   if (!questions.length) return <div>Loading...</div>;
@@ -140,7 +138,10 @@ function App() {
             {questions[currentQuestion].options.map((option, index) => (
               <button
                 key={index}
-                onClick={() => handleAnswer(option.value)}
+                onClick={(e) => {
+                  e.preventDefault(); // Prevent default behavior
+                  handleAnswer(option.value);
+                }}
                 disabled={isLoading}
                 className={isLoading ? 'disabled' : ''}
               >
