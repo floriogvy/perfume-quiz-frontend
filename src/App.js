@@ -38,21 +38,21 @@ function App() {
 
     const updateLanguage = () => {
       if (cachedLocale && cachedLocale === (language === 'zh' || language === 'zh-TW' ? 'zh' : 'en')) {
-        console.log('Mobile debug: Using cached locale:', cachedLocale);
+        console.log('iPhone debug: Using cached locale:', cachedLocale);
         return;
       }
 
       // Check URL parameter first
       const urlParams = new URLSearchParams(window.location.search);
       let shopifyLocale = urlParams.get('locale');
-      console.log('Mobile debug: URL locale:', shopifyLocale);
+      console.log('iPhone debug: URL locale:', shopifyLocale);
 
       // Fallback to cookies
       if (!shopifyLocale) {
         const cookies = ['locale', 'cart_currency', 'shopify_locale', '_shopify_y', '_shopify_s'];
         for (const cookie of cookies) {
           shopifyLocale = getCookie(cookie);
-          console.log(`Mobile debug: Cookie ${cookie}:`, shopifyLocale);
+          console.log(`iPhone debug: Cookie ${cookie}:`, shopifyLocale);
           if (shopifyLocale && (shopifyLocale === 'zh' || shopifyLocale === 'zh-TW' || shopifyLocale === 'en')) break;
         }
       }
@@ -62,20 +62,21 @@ function App() {
         try {
           const parentUrl = new URL(window.parent.location.href);
           shopifyLocale = parentUrl.searchParams.get('locale');
-          console.log('Mobile debug: Parent URL locale:', shopifyLocale);
+          console.log('iPhone debug: Parent URL locale:', shopifyLocale);
         } catch (e) {
-          console.log('Mobile debug: Could not access parent window:', e);
+          console.log('iPhone debug: Could not access parent window:', e);
         }
       }
 
       // Avoid browser language fallback unless no other source
       if (!shopifyLocale) {
         shopifyLocale = 'en';
-        console.log('Mobile debug: Defaulting to en (no locale found)');
+        console.log('iPhone debug: Defaulting to en (no locale found)');
       }
 
       cachedLocale = shopifyLocale;
       const newLanguage = shopifyLocale === 'zh' || shopifyLocale === 'zh-TW' ? 'zh' : 'en';
+      console.log('iPhone debug: Setting language:', newLanguage);
       if (newLanguage !== language) {
         setLanguage(newLanguage);
       }
@@ -86,7 +87,7 @@ function App() {
     // Listen for language changes via postMessage
     const handleMessage = (event) => {
       if (event.data && event.data.locale) {
-        console.log('Mobile debug: Received postMessage locale:', event.data.locale);
+        console.log('iPhone debug: Received postMessage locale:', event.data.locale);
         cachedLocale = event.data.locale;
         const newLanguage = event.data.locale === 'zh' || event.data.locale === 'zh-TW' ? 'zh' : 'en';
         if (newLanguage !== language) {
@@ -148,7 +149,7 @@ function App() {
             return response.json();
           })
           .then(data => {
-            console.log('Mobile debug: Rendering recommendations with language:', language);
+            console.log('iPhone debug: Rendering recommendations with language:', language);
             setRecommendations(data);
             setIsLoading(false);
           })
