@@ -150,6 +150,8 @@ function App() {
           })
           .then(data => {
             console.log('iPhone debug: Rendering recommendations with language:', language);
+            // Show alert for debugging on mobile
+            alert(`Debug: Language when rendering results is ${language}`);
             setRecommendations(data);
             setIsLoading(false);
           })
@@ -159,6 +161,14 @@ function App() {
           });
       }
     }, 500);
+  };
+
+  // Determine link language based on displayed content
+  const getLinkLanguage = (perfume) => {
+    // If name_zh is displayed, use Chinese link
+    const isChinese = language === 'zh' || (perfume.name_zh && document.querySelector('.App')?.innerText.includes(perfume.name_zh));
+    console.log('iPhone debug: Link language for', perfume.name, 'isChinese:', isChinese);
+    return isChinese ? '/zh' : '';
   };
 
   if (!questions.length) return <div>Loading...</div>;
@@ -172,7 +182,7 @@ function App() {
             {recommendations.map((perfume, index) => (
               <li key={index} className="perfume-button">
                 <a
-                  href={`https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}`}
+                  href={`https://floriographyscents.com${getLinkLanguage(perfume)}/products/${productHandles[perfume.name]}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
