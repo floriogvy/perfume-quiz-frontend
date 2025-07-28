@@ -171,7 +171,7 @@ function App() {
           <h2>{language === 'zh' ? '你的前三款香水推薦：' : 'Your Top 3 Perfume Recommendations:'}</h2>
           <ul>
             {recommendations.map((perfume, index) => {
-              const linkUrl = `https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}`;
+              const linkUrl = `https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}${language === 'zh' ? '?lang=zh' : ''}`;
               return (
                 <li key={index} className="perfume-button">
                   <a
