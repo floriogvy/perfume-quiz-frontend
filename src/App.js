@@ -162,6 +162,20 @@ function App() {
     }, 500);
   };
 
+  // Handle link click with redirect check
+  const handleLinkClick = (perfume, linkUrl) => {
+    console.log('iPhone debug: Clicking link:', linkUrl);
+    alert(`Debug: Clicking link for ${perfume.name_zh || perfume.name}: ${linkUrl}`);
+    // Add redirect check for Chinese
+    if (language === 'zh' && !linkUrl.includes('/zh')) {
+      const newUrl = linkUrl.replace('floriographyscents.com/', 'floriographyscents.com/zh/') + (linkUrl.includes('?') ? '&locale=zh' : '?locale=zh');
+      console.log('iPhone debug: Redirecting to:', newUrl);
+      window.open(newUrl, '_blank');
+    } else {
+      window.open(linkUrl, '_blank');
+    }
+  };
+
   if (!questions.length) return <div>Loading...</div>;
 
   return (
@@ -171,16 +185,16 @@ function App() {
           <h2>{language === 'zh' ? '你的前三款香水推薦：' : 'Your Top 3 Perfume Recommendations:'}</h2>
           <ul>
             {recommendations.map((perfume, index) => {
-              const linkUrl = `https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}${language === 'zh' ? '?lang=zh' : ''}`;
+              const linkUrl = `https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}${language === 'zh' ? '?lang=zh&locale=zh' : ''}`;
               return (
                 <li key={index} className="perfume-button">
                   <a
                     href={linkUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => {
-                      console.log('iPhone debug: Clicking link:', linkUrl);
-                      alert(`Debug: Clicking link for ${perfume.name_zh || perfume.name}: ${linkUrl}`);
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevent default to control navigation
+                      handleLinkClick(perfume, linkUrl);
                     }}
                   >
                     {language === 'zh' ? perfume.name_zh : perfume.name}
