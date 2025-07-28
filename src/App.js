@@ -166,7 +166,12 @@ function App() {
   const handleLinkClick = (perfume, linkUrl) => {
     console.log('iPhone debug: Clicking link:', linkUrl);
     alert(`Debug: Clicking link for ${perfume.name_zh || perfume.name}: ${linkUrl}`);
-    window.open(linkUrl, '_blank');
+    // Force Chinese link if language is zh
+    const finalUrl = language === 'zh' && !linkUrl.includes('/zh') 
+      ? linkUrl.replace('floriographyscents.com/', 'floriographyscents.com/zh/') + (linkUrl.includes('?') ? '&locale=zh' : '?locale=zh')
+      : linkUrl;
+    console.log('iPhone debug: Opening final URL:', finalUrl);
+    window.open(finalUrl, '_blank');
   };
 
   if (!questions.length) return <div>Loading...</div>;
@@ -182,6 +187,7 @@ function App() {
               return (
                 <li key={index} className="perfume-button">
                   <a
+                    href={linkUrl} // Added href to satisfy ESLint
                     onClick={(e) => {
                       e.preventDefault(); // Prevent default navigation
                       handleLinkClick(perfume, linkUrl);
