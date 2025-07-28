@@ -172,14 +172,16 @@ function App() {
           <ul>
             {recommendations.map((perfume, index) => {
               const linkUrl = `https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}`;
-              // Alert link URL for debugging on mobile
-              alert(`Debug: Link for ${perfume.name_zh || perfume.name} is ${linkUrl}`);
               return (
                 <li key={index} className="perfume-button">
                   <a
                     href={linkUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => {
+                      console.log('iPhone debug: Clicking link:', linkUrl);
+                      alert(`Debug: Clicking link for ${perfume.name_zh || perfume.name}: ${linkUrl}`);
+                    }}
                   >
                     {language === 'zh' ? perfume.name_zh : perfume.name}
                   </a>
