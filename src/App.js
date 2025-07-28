@@ -150,7 +150,6 @@ function App() {
           })
           .then(data => {
             console.log('iPhone debug: Rendering recommendations with language:', language);
-            // Show alert for debugging on mobile
             alert(`Debug: Language when rendering results is ${language}`);
             setRecommendations(data);
             setIsLoading(false);
@@ -163,14 +162,6 @@ function App() {
     }, 500);
   };
 
-  // Determine link language based on displayed content
-  const getLinkLanguage = (perfume) => {
-    // If name_zh is displayed, use Chinese link
-    const isChinese = language === 'zh' || (perfume.name_zh && document.querySelector('.App')?.innerText.includes(perfume.name_zh));
-    console.log('iPhone debug: Link language for', perfume.name, 'isChinese:', isChinese);
-    return isChinese ? '/zh' : '';
-  };
-
   if (!questions.length) return <div>Loading...</div>;
 
   return (
@@ -179,18 +170,23 @@ function App() {
         <div>
           <h2>{language === 'zh' ? '你的前三款香水推薦：' : 'Your Top 3 Perfume Recommendations:'}</h2>
           <ul>
-            {recommendations.map((perfume, index) => (
-              <li key={index} className="perfume-button">
-                <a
-                  href={`https://floriographyscents.com${getLinkLanguage(perfume)}/products/${productHandles[perfume.name]}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {language === 'zh' ? perfume.name_zh : perfume.name}
-                </a>
-                <p className="perfume-description">{language === 'zh' ? perfume.traits_zh.join(', ') : perfume.traits.join(', ')}</p>
-              </li>
-            ))}
+            {recommendations.map((perfume, index) => {
+              const linkUrl = `https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}`;
+              // Alert link URL for debugging on mobile
+              alert(`Debug: Link for ${perfume.name_zh || perfume.name} is ${linkUrl}`);
+              return (
+                <li key={index} className="perfume-button">
+                  <a
+                    href={linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {language === 'zh' ? perfume.name_zh : perfume.name}
+                  </a>
+                  <p className="perfume-description">{language === 'zh' ? perfume.traits_zh.join(', ') : perfume.traits.join(', ')}</p>
+                </li>
+              );
+            })}
           </ul>
         </div>
       ) : (
