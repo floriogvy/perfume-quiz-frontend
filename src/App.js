@@ -166,12 +166,7 @@ function App() {
   const handleLinkClick = (perfume, linkUrl) => {
     console.log('iPhone debug: Clicking link:', linkUrl);
     alert(`Debug: Clicking link for ${perfume.name_zh || perfume.name}: ${linkUrl}`);
-    // Force Chinese link if language is zh
-    const finalUrl = language === 'zh' && !linkUrl.includes('/zh') 
-      ? linkUrl.replace('floriographyscents.com/', 'floriographyscents.com/zh/') + (linkUrl.includes('?') ? '&locale=zh&lang=zh' : '?locale=zh&lang=zh')
-      : linkUrl;
-    console.log('iPhone debug: Opening final URL:', finalUrl);
-    window.open(finalUrl, '_blank');
+    window.open(linkUrl, '_blank');
   };
 
   if (!questions.length) return <div>Loading...</div>;
@@ -183,11 +178,10 @@ function App() {
           <h2>{language === 'zh' ? '你的前三款香水推薦：' : 'Your Top 3 Perfume Recommendations:'}</h2>
           <ul>
             {recommendations.map((perfume, index) => {
-              const linkUrl = `https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}${language === 'zh' ? '?locale=zh&lang=zh' : ''}`;
+              const linkUrl = `https://floriographyscents.com${language === 'zh' ? '/zh' : ''}/products/${productHandles[perfume.name]}${language === 'zh' ? '?locale=zh' : ''}`;
               return (
                 <li key={index} className="perfume-button">
                   <a
-                    href={linkUrl}
                     onClick={(e) => {
                       e.preventDefault(); // Prevent default navigation
                       handleLinkClick(perfume, linkUrl);
